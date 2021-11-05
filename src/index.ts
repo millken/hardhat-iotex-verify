@@ -11,13 +11,15 @@ import { getCompilersDir } from "hardhat/internal/util/global-dir";
 import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 
 import {
+  MAINNET_BROWSER_URL,
   mainnetVerifyURL,
   pluginName,
   TASK_IOTEXSCOUT_VERIFY,
+  TESTNET_BROWSER_URL,
   testnetVerifyURL,
 } from "./constants";
 import { submitSourcesToIotexScout } from "./iotexscout";
-import { Store } from "./types";
+import { Store, VerifyApiResponse } from "./types";
 
 const store: Store = {
   inputJSON: "",
@@ -37,7 +39,7 @@ subtask(TASK_COMPILE_SOLIDITY_COMPILE, async (taskArgs: any, { run }) => {
   store.platform = desiredPlatform;
   store.settings = taskArgs.input.settings;
   store.inputJSON = JSON.stringify(taskArgs.input);
-  //break task no return
+  // break task no return
 });
 
 task(TASK_IOTEXSCOUT_VERIFY, "Verifies contract on IotexScout")
@@ -56,6 +58,7 @@ task(TASK_IOTEXSCOUT_VERIFY, "Verifies contract on IotexScout")
       );
     }
     const apiUrl = args.testnet ? testnetVerifyURL : mainnetVerifyURL;
+    // const apiUrl = "http://192.168.0.202:8084/api/verifyByInputJSON";
     console.log(
       "verify contract address: " +
         args.address +
@@ -70,5 +73,22 @@ task(TASK_IOTEXSCOUT_VERIFY, "Verifies contract on IotexScout")
     console.log("platform: " + store.platform);
     console.log("settings: " + JSON.stringify(store.settings));
     console.log("verifing data...");
-    await submitSourcesToIotexScout(apiUrl, args.address, store);
+    const result = await submitSourcesToIotexScout(apiUrl, args.address, store);
+    if (!result.isOk()) {
+      throw new NomicLabsHardhatPluginError(
+        pluginName,
+        `The API responded with a failure status.
+    Reason: ${result.message}`
+      );
+    } else {
+      const contractURL =
+        (args.testnet ? TESTNET_BROWSER_URL : MAINNET_BROWSER_URL) +
+        "/address/" +
+        address +
+        "#code";
+      console.log(
+        `Successfully verified contract address ${address} on IotexScout.
+      ${contractURL}`
+      );
+    }
   });

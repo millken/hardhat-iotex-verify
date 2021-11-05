@@ -2,7 +2,7 @@
   "name": "hardhat-iotex-verify",
   "version": "0.0.1",
   "description": "Hardhat plugin for verifying contracts on IoTeX",
-  "repository": "github:nomiclabs/hardhat-ts-plugin-boilerplate",
+  "repository": "github:millken/hardhat-iotex-verify",
   "author": "millken",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "form-data": "^4.0.0",
-    "formdata": "^0.10.4"
+    "form-data": "^4.0.0"
   }
 }
