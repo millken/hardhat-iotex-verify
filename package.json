@@ -1,6 +1,6 @@
 {
   "name": "hardhat-iotex-verify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hardhat plugin for verifying contracts on IoTeX",
   "repository": "github:millken/hardhat-iotex-verify",
   "author": "millken",
