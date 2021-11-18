@@ -27,25 +27,26 @@ const store: Store = {
   platform: "",
 };
 
-subtask(TASK_COMPILE_SOLIDITY_COMPILE, async (taskArgs: any, { run }) => {
-  const compilersCache = await getCompilersDir();
-  const downloader = new CompilerDownloader(compilersCache);
-  const {
-    longVersion,
-    platform: desiredPlatform,
-  } = await downloader.getCompilerBuild(taskArgs.solcVersion);
-
-  store.longVersion = longVersion;
-  store.platform = desiredPlatform;
-  store.settings = taskArgs.input.settings;
-  store.inputJSON = JSON.stringify(taskArgs.input);
-  // break task no return
-});
-
 task(TASK_IOTEXSCOUT_VERIFY, "Verifies contract on IotexScout")
   .addPositionalParam("address", "Address of the smart contract to verify")
   .addFlag("testnet", "verify on IoTeX testnet specified by --testnet option")
   .setAction(async (args, hre) => {
+
+  subtask(TASK_COMPILE_SOLIDITY_COMPILE, async (taskArgs: any, { run }) => {
+    const compilersCache = await getCompilersDir();
+    const downloader = new CompilerDownloader(compilersCache);
+    const {
+      longVersion,
+      platform: desiredPlatform,
+    } = await downloader.getCompilerBuild(taskArgs.solcVersion);
+
+    store.longVersion = longVersion;
+    store.platform = desiredPlatform;
+    store.settings = taskArgs.input.settings;
+    store.inputJSON = JSON.stringify(taskArgs.input);
+    // break task no return
+  });
+
     const address: string = args.address;
     if (
       address === "" ||
